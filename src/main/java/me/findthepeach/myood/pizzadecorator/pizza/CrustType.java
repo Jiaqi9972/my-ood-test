@@ -1,4 +1,4 @@
-package me.findthepeach.myood.pizzadecorator.pizza.enums;
+package me.findthepeach.myood.pizzadecorator.pizza;
 
 public enum CrustType {
     CLASSIC("classic", 2),

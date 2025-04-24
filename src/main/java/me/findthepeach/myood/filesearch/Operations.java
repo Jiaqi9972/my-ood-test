@@ -1,72 +1,67 @@
 package me.findthepeach.myood.filesearch;
 
-import me.findthepeach.myood.filesearch.fileelement.Directory;
-import me.findthepeach.myood.filesearch.fileelement.File;
-import me.findthepeach.myood.filesearch.fileelement.FileSystemElement;
+import me.findthepeach.myood.filesearch.entry.Directory;
+import me.findthepeach.myood.filesearch.entry.Entry;
+import me.findthepeach.myood.filesearch.entry.File;
+import me.findthepeach.myood.filesearch.search.CompositeSearch;
 import me.findthepeach.myood.filesearch.search.SearchCriteria;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Operations {
-
-    public Directory createRoot(String name){
-        return new Directory(name);
+    public File createFile(String fileName, String extension, long size){
+        return new File(fileName, extension, size);
     }
 
-    public Directory createDirectory(String name, Directory parent){
-        Directory directory = new Directory(name, parent);
-        parent.addChild(directory);
-        return directory;
+    public Directory createDirectory(String directoryName){
+        return new Directory(directoryName);
     }
 
-    public File createFile(String name, Directory parent, long size, String extension){
-        File file =  new File(name, parent, size, extension);
-        parent.addChild(file);
-        return file;
+    public void addInDirectory(Directory directory, Entry entry){
+        directory.addChild(entry);
     }
 
-    public List<FileSystemElement> search(Directory directory, SearchCriteria searchCriteria){
-        List<FileSystemElement> results = new ArrayList<>();
-        searchRecursive(directory, searchCriteria, results);
-        return results;
-    }
+    public List<File> searchInDirectory(Directory directory, CompositeSearch compositeSearch){
+        List<File> res = new ArrayList<>();
+        Queue<Directory> queue = new LinkedList<>();
+        queue.add(directory);
+        while(!queue.isEmpty()){
+            Directory current = queue.poll();;
+            for(Entry entry : current.getChildren()){
+                if(entry.isDirectory()){
+                    queue.offer((Directory) entry);
+                }else{
+                    if(compositeSearch.matches((File) entry)){
+                        res.add((File) entry);
+                    }
+                }
 
-    public List<FileSystemElement> complexSearch(Directory directory, List<SearchCriteria> searchCriteria){
-        List<FileSystemElement> results = new ArrayList<>();
-        complexSearchRecursive(directory, searchCriteria, results);
-        return results;
-    }
-
-    public void searchRecursive(Directory directory, SearchCriteria searchCriteria, List<FileSystemElement> results){
-        for(FileSystemElement element : directory.getChildren()){
-            if(searchCriteria.match(element)){
-                results.add(element);
-            }
-            if(element.isDirectory()){
-                searchRecursive((Directory) element, searchCriteria, results);
             }
         }
+        return res;
     }
 
-    public void complexSearchRecursive(Directory directory, List<SearchCriteria> searchCriteria, List<FileSystemElement> results){
-        for(FileSystemElement element : directory.getChildren()){
-            if(matchesAllCriteria(element, searchCriteria)){
-                results.add(element);
-            }
-            if(element.isDirectory()){
-                complexSearchRecursive((Directory) element, searchCriteria, results);
+    public List<File> searchInDirectory(Directory directory, SearchCriteria searchCriteria){
+        List<File> res = new ArrayList<>();
+        Queue<Directory> queue = new LinkedList<>();
+        queue.add(directory);
+        while(!queue.isEmpty()){
+            Directory current = queue.poll();
+            for(Entry entry : current.getChildren()){
+                if(entry.isDirectory()){
+                    queue.offer((Directory) entry);
+                }else {
+                    if(searchCriteria.matches((File) entry)){
+                        res.add((File) entry);
+                    }
+                }
             }
         }
+        return res;
     }
 
-    private boolean matchesAllCriteria(FileSystemElement element, List<SearchCriteria> criteriaList) {
-        for (SearchCriteria criteria : criteriaList) {
-            if (!criteria.match(element)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
 }

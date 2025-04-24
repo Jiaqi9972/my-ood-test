@@ -1,4 +1,4 @@
-package me.findthepeach.myood.pizzadecorator.pizza.enums;
+package me.findthepeach.myood.pizzadecorator.pizza;
 
 public enum Size {
     SMALL("small",5),
@@ -17,3 +17,4 @@ public enum Size {
         return name;
     }
 }
+

@@ -1,11 +1,8 @@
 package me.findthepeach.myood.pizzadecorator.pizza;
 
-import me.findthepeach.myood.pizzadecorator.pizza.enums.Topping;
-
-public class Cheese extends ToppingsDecorator {
-
-    public Cheese(Pizza pizza){
-        super(pizza);
+public class Cheese extends ToppingDecorator{
+    public Cheese(Pizza Pizza) {
+        super(Pizza);
     }
 
     @Override

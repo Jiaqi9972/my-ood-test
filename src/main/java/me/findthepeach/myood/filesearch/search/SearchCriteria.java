@@ -1,7 +1,7 @@
 package me.findthepeach.myood.filesearch.search;
 
-import me.findthepeach.myood.filesearch.fileelement.FileSystemElement;
+import me.findthepeach.myood.filesearch.entry.File;
 
 public interface SearchCriteria {
-    boolean match(FileSystemElement fileSystemElement);
+    boolean matches(File file);
 }
